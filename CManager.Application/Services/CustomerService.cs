@@ -30,7 +30,7 @@ public class CustomerService : ICustomerService
             c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
     }
 
-    public Customer CreateCustomer(
+    public bool CreateCustomer(
         string firstName,
         string lastName,
         string email,
@@ -39,38 +39,65 @@ public class CustomerService : ICustomerService
         string postalCode,
         string city)
     {
+        if (string.IsNullOrWhiteSpace(firstName)) return false;
+        if (string.IsNullOrWhiteSpace(lastName)) return false;
+        if (string.IsNullOrWhiteSpace(email)) return false;
+
+        if (string.IsNullOrWhiteSpace(phoneNumber)) return false;
+        if (string.IsNullOrWhiteSpace(street)) return false;
+        if (string.IsNullOrWhiteSpace(postalCode)) return false;
+        if (string.IsNullOrWhiteSpace(city)) return false;
+
+        if (_customers.Any(c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase)))
+            return false;
+
         var customer = new Customer
         {
             Id = Guid.NewGuid(),
-            FirstName = firstName,
-            LastName = lastName,
-            Email = email,
-            PhoneNumber = phoneNumber,
+            FirstName = firstName.Trim(),
+            LastName = lastName.Trim(),
+            Email = email.Trim(),
+            PhoneNumber = phoneNumber.Trim(),
             Address = new Address
             {
-                Street = street,
-                PostalCode = postalCode,
-                City = city
+                Street = street.Trim(),
+                PostalCode = postalCode.Trim(),
+                City = city.Trim()
             }
         };
 
         _customers.Add(customer);
-        _storage.SaveAll(_customers);
 
-        return customer;
+        try
+        {
+            _storage.SaveAll(_customers);
+            return true;
+        }
+        catch
+        {
+            _customers.Remove(customer);
+            return false;
+        }
     }
 
     public bool DeleteCustomerByEmail(string email)
     {
         var customer = GetCustomerByEmail(email);
         if (customer == null)
-        {
             return false;
-        }
 
         _customers.Remove(customer);
-        _storage.SaveAll(_customers);
 
-        return true;
+        try
+        {
+            _storage.SaveAll(_customers);
+            return true;
+        }
+        catch
+        {
+            _customers.Add(customer);
+            return false;
+        }
     }
+
 }

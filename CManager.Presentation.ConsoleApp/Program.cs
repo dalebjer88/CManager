@@ -1,11 +1,21 @@
-﻿namespace CManager.Presentation.ConsoleApp;
+﻿using CManager.Application.Interfaces;
+using CManager.Application.Services;
+using CManager.Domain.Interfaces;
+using CManager.Infrastructure.Repositories;
+using CManager.Presentation.ConsoleApp.Controllers;
+
+namespace CManager.Presentation.ConsoleApp;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
-        Console.WriteLine("CManager console app started.");
-        Console.WriteLine("Press any key to exit...");
-        Console.ReadKey();
+        var filePath = "customers.json";
+
+        ICustomerRepo customerRepo = new CustomerRepo(filePath);
+        ICustomerService customerService = new CustomerService(customerRepo);
+        var menuController = new MenuController(customerService);
+
+        menuController.Run();
     }
 }
