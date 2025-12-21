@@ -1,7 +1,9 @@
-﻿using CManager.Application.Interfaces;
+﻿using CManager.Application.Helpers;
+using CManager.Application.Interfaces;
 using CManager.Application.Services;
 using CManager.Domain.Interfaces;
-using CManager.Infrastructure.Repositories;
+using CManager.Infrastructure.Formatters;
+using CManager.Infrastructure.Repos;
 using CManager.Presentation.ConsoleApp.Controllers;
 
 namespace CManager.Presentation.ConsoleApp;
@@ -12,10 +14,13 @@ internal class Program
     {
         var filePath = "customers.json";
 
-        ICustomerRepo customerRepo = new CustomerRepo(filePath);
-        ICustomerService customerService = new CustomerService(customerRepo);
-        var menuController = new MenuController(customerService);
+        IJsonFormatter formatter = new JsonFormatter();
+        ICustomerRepo repo = new CustomerRepo(filePath, formatter);
+        IIdGenerator idGenerator = new IdGenerator();
 
-        menuController.Run();
+        ICustomerService service = new CustomerService(repo, idGenerator);
+
+        var menu = new MenuController(service);
+        menu.Run();
     }
 }
