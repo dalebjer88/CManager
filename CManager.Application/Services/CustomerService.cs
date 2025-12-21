@@ -5,29 +5,30 @@ namespace CManager.Application.Services;
 
 public class CustomerService : ICustomerService
 {
-    private readonly ICustomerListStorage _storage;
-    private readonly List<Customer> _customers;
+    private readonly ICustomerRepo _repo;
+    private readonly IIdGenerator _idGenerator;
 
-    public CustomerService(ICustomerListStorage storage)
+    public CustomerService(ICustomerRepo repo, IIdGenerator idGenerator)
     {
-        _storage = storage;
-        _customers = _storage.LoadAll();
+        _repo = repo;
+        _idGenerator = idGenerator;
     }
 
-    public List<Customer> GetAllCustomers()
+    public IEnumerable<Customer> GetAllCustomers()
     {
-        return _customers;
+        return _repo.LoadAll();
     }
 
     public Customer? GetCustomerByEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
-        {
             return null;
-        }
 
-        return _customers.FirstOrDefault(
-            c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+        var customers = _repo.LoadAll();
+        var normalizedEmail = email.Trim();
+        return customers.FirstOrDefault(
+            c => c.Email.Equals(normalizedEmail, StringComparison.OrdinalIgnoreCase));
+
     }
 
     public bool CreateCustomer(
@@ -48,15 +49,17 @@ public class CustomerService : ICustomerService
         if (string.IsNullOrWhiteSpace(postalCode)) return false;
         if (string.IsNullOrWhiteSpace(city)) return false;
 
-        if (_customers.Any(c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase)))
+        var normalizedEmail = email.Trim();
+        var customers = _repo.LoadAll();
+        if (customers.Any(c => c.Email.Equals(normalizedEmail, StringComparison.OrdinalIgnoreCase)))
             return false;
 
         var customer = new Customer
         {
-            Id = Guid.NewGuid(),
+            Id = _idGenerator.Generate(),
             FirstName = firstName.Trim(),
             LastName = lastName.Trim(),
-            Email = email.Trim(),
+            Email = normalizedEmail,
             PhoneNumber = phoneNumber.Trim(),
             Address = new Address
             {
@@ -66,38 +69,37 @@ public class CustomerService : ICustomerService
             }
         };
 
-        _customers.Add(customer);
-
-        try
-        {
-            _storage.SaveAll(_customers);
-            return true;
-        }
-        catch
-        {
-            _customers.Remove(customer);
-            return false;
-        }
+        return _repo.Add(customer);
+    }
+    public bool UpdateCustomer(Customer customer)
+    {
+        return _repo.Update(customer);
     }
 
     public bool DeleteCustomerByEmail(string email)
     {
-        var customer = GetCustomerByEmail(email);
+        if (string.IsNullOrWhiteSpace(email))
+            return false;
+
+        var customers = _repo.LoadAll();
+        var normalizedEmail = email.Trim();
+        var customer = customers.FirstOrDefault(
+            c => c.Email.Equals(normalizedEmail, StringComparison.OrdinalIgnoreCase));
+
+
         if (customer == null)
             return false;
 
-        _customers.Remove(customer);
-
-        try
-        {
-            _storage.SaveAll(_customers);
-            return true;
-        }
-        catch
-        {
-            _customers.Add(customer);
-            return false;
-        }
+        return _repo.Delete(customer.Id);
     }
 
+    public Customer? GetCustomerById(Guid id)
+    {
+        return _repo.GetById(id);
+    }
+
+    public bool DeleteCustomerById(Guid id)
+    {
+        return _repo.Delete(id);
+    }
 }
