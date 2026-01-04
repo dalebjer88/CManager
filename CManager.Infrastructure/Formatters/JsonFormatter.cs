@@ -3,7 +3,7 @@ using CManager.Domain.Interfaces;
 
 namespace CManager.Infrastructure.Formatters;
 
-public class JsonFormatter : IJsonFormatter
+public sealed class JsonFormatter() : IJsonFormatter
 {
     private readonly JsonSerializerOptions _options = new()
     {

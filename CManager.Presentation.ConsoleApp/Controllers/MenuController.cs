@@ -1,11 +1,16 @@
 ﻿using CManager.Application.Interfaces;
 using CManager.Domain.Models;
+
 namespace CManager.Presentation.ConsoleApp.Controllers;
 
-public class MenuController(ICustomerService customerService)
+public sealed class MenuController
 {
-    private readonly ICustomerService _customerService = customerService;
+    private readonly ICustomerService _customerService;
 
+    public MenuController(ICustomerService customerService)
+    {
+        _customerService = customerService;
+    }
     public void Run()
     {
         while (true)
@@ -110,7 +115,7 @@ public class MenuController(ICustomerService customerService)
     private void ViewAllCustomers()
     {
         Console.WriteLine("All customers");
-        Console.WriteLine("");
+        Console.WriteLine();
 
         var customers = _customerService.GetAllCustomers().ToList();
 
@@ -225,7 +230,7 @@ public class MenuController(ICustomerService customerService)
         while (true)
         {
             Console.Write(text);
-            var input = (Console.ReadLine() ?? string.Empty).Trim().ToLower();
+            var input = Console.ReadLine()?.Trim().ToLower() ?? string.Empty;
 
             if (input == "y")
                 return true;

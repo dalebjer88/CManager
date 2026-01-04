@@ -1,8 +1,9 @@
 ﻿using CManager.Domain.Interfaces;
 using CManager.Domain.Models;
+
 namespace CManager.Infrastructure.Repos;
 
-public class CustomerRepo : ICustomerRepo
+public sealed class CustomerRepo : ICustomerRepo
 {
     private readonly string _filePath;
     private readonly IJsonFormatter _formatter;

@@ -1,4 +1,5 @@
 ﻿using CManager.Domain.Models;
+
 namespace CManager.Application.Interfaces;
 
 public interface ICustomerService

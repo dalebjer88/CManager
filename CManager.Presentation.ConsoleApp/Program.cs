@@ -13,13 +13,10 @@ internal class Program
     private static void Main(string[] args)
     {
         var filePath = "customers.json";
-
         IJsonFormatter formatter = new JsonFormatter();
         ICustomerRepo repo = new CustomerRepo(filePath, formatter);
         IIdGenerator idGenerator = new IdGenerator();
-
         ICustomerService service = new CustomerService(repo, idGenerator);
-
         var menu = new MenuController(service);
         menu.Run();
     }

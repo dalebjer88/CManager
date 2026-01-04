@@ -1,9 +1,10 @@
 ﻿using CManager.Application.Interfaces;
 using CManager.Domain.Interfaces;
 using CManager.Domain.Models;
+
 namespace CManager.Application.Services;
 
-public class CustomerService : ICustomerService
+public sealed class CustomerService : ICustomerService
 {
     private readonly ICustomerRepo _repo;
     private readonly IIdGenerator _idGenerator;
@@ -43,7 +44,6 @@ public class CustomerService : ICustomerService
         if (string.IsNullOrWhiteSpace(firstName)) return false;
         if (string.IsNullOrWhiteSpace(lastName)) return false;
         if (string.IsNullOrWhiteSpace(email)) return false;
-
         if (string.IsNullOrWhiteSpace(phoneNumber)) return false;
         if (string.IsNullOrWhiteSpace(street)) return false;
         if (string.IsNullOrWhiteSpace(postalCode)) return false;
@@ -51,6 +51,7 @@ public class CustomerService : ICustomerService
 
         var normalizedEmail = email.Trim();
         var customers = _repo.LoadAll();
+
         if (customers.Any(c => c.Email.Equals(normalizedEmail, StringComparison.OrdinalIgnoreCase)))
             return false;
 

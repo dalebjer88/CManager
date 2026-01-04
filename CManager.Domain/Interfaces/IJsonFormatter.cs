@@ -1,5 +1,4 @@
 ﻿namespace CManager.Domain.Interfaces;
-
 public interface IJsonFormatter
 {
     string Serialize<T>(T obj);
