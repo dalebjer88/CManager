@@ -8,11 +8,13 @@ public sealed class CustomerService : ICustomerService
 {
     private readonly ICustomerRepo _repo;
     private readonly IIdGenerator _idGenerator;
+    private readonly ICustomerFactory _customerFactory;
 
-    public CustomerService(ICustomerRepo repo, IIdGenerator idGenerator)
+    public CustomerService(ICustomerRepo repo, IIdGenerator idGenerator, ICustomerFactory customerFactory)
     {
         _repo = repo;
         _idGenerator = idGenerator;
+        _customerFactory = customerFactory;
     }
 
     public IEnumerable<Customer> GetAllCustomers()
@@ -55,20 +57,18 @@ public sealed class CustomerService : ICustomerService
         if (customers.Any(c => c.Email.Equals(normalizedEmail, StringComparison.OrdinalIgnoreCase)))
             return false;
 
-        var customer = new Customer
-        {
-            Id = _idGenerator.Generate(),
-            FirstName = firstName.Trim(),
-            LastName = lastName.Trim(),
-            Email = normalizedEmail,
-            PhoneNumber = phoneNumber.Trim(),
-            Address = new Address
-            {
-                Street = street.Trim(),
-                PostalCode = postalCode.Trim(),
-                City = city.Trim()
-            }
-        };
+        var id = _idGenerator.Generate();
+
+        var customer = _customerFactory.Create(
+            id,
+            firstName.Trim(),
+            lastName.Trim(),
+            normalizedEmail,
+            phoneNumber.Trim(),
+            street.Trim(),
+            postalCode.Trim(),
+            city.Trim()
+        );
 
         return _repo.Add(customer);
     }

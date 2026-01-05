@@ -1,6 +1,7 @@
 ﻿using CManager.Application.Helpers;
 using CManager.Application.Interfaces;
 using CManager.Application.Services;
+using CManager.Application.Factories;
 using CManager.Domain.Interfaces;
 using CManager.Infrastructure.Formatters;
 using CManager.Infrastructure.Repos;
@@ -13,10 +14,15 @@ internal class Program
     private static void Main(string[] args)
     {
         var filePath = "customers.json";
+
         IJsonFormatter formatter = new JsonFormatter();
         ICustomerRepo repo = new CustomerRepo(filePath, formatter);
+
         IIdGenerator idGenerator = new IdGenerator();
-        ICustomerService service = new CustomerService(repo, idGenerator);
+        ICustomerFactory customerFactory = new CustomerFactory();
+
+        ICustomerService service = new CustomerService(repo, idGenerator, customerFactory);
+        
         var menu = new MenuController(service);
         menu.Run();
     }
