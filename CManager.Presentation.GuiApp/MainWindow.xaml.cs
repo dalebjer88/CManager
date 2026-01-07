@@ -19,6 +19,8 @@ namespace CManager.Presentation.GuiApp
         public MainWindow()
         {
             InitializeComponent();
+
+        
         }
     }
 }

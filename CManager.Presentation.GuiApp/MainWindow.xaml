@@ -1,12 +1,22 @@
 ﻿<Window x:Class="CManager.Presentation.GuiApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CManager.Presentation.GuiApp"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="CManager" Height="600" Width="900">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel Grid.Column="0" Margin="12">
+            <TextBlock Text="Customer Manager" FontSize="18" Margin="0,0,0,12" />
 
+            <Button Content="Create customer" Height="32" Margin="0,0,0,8" />
+            <Button Content="View customers" Height="32" Margin="0,0,0,8" />
+             </StackPanel>
+        
+        <Border Grid.Column="1" Margin="12" BorderThickness="1" Padding="12">
+            <ContentControl />
+        </Border>
     </Grid>
 </Window>
