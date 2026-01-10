@@ -1,7 +1,17 @@
 ﻿<Application x:Class="CManager.Presentation.GuiApp.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:CManager.Presentation.GuiApp">
+             xmlns:local="clr-namespace:CManager.Presentation.GuiApp"
+             xmlns:vm="clr-namespace:CManager.Presentation.GuiApp.ViewModels"
+             xmlns:v="clr-namespace:CManager.Presentation.GuiApp.Views">
     <Application.Resources>
+        <DataTemplate DataType="{x:Type vm:CustomersListViewModel}">
+            <v:CustomersListView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type vm:CreateCustomerViewModel}">
+            <v:CreateCustomerView />
+        </DataTemplate>
+
     </Application.Resources>
 </Application>
