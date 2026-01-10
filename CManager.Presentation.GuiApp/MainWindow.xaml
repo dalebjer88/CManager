@@ -1,22 +1,41 @@
 ﻿<Window x:Class="CManager.Presentation.GuiApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:CManager.Presentation.GuiApp.ViewModels"
+        xmlns:views="clr-namespace:CManager.Presentation.GuiApp.Views"
+        mc:Ignorable="d"
         Title="CManager" Height="600" Width="900">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewModels:CustomersListViewModel}">
+            <views:CustomersListView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModels:CreateCustomerViewModel}">
+            <views:CreateCustomerView />
+        </DataTemplate>
+    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="220" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        
+
         <StackPanel Grid.Column="0" Margin="12">
             <TextBlock Text="Customer Manager" FontSize="18" Margin="0,0,0,12" />
 
-            <Button Content="Create customer" Height="32" Margin="0,0,0,8" />
-            <Button Content="View customers" Height="32" Margin="0,0,0,8" />
-             </StackPanel>
-        
-        <Border Grid.Column="1" Margin="12" BorderThickness="1" Padding="12">
-            <ContentControl />
+            <Button Content="Create customer" Height="32" Margin="0,0,0,8"
+                    Command="{Binding ShowCreateViewCommand}"/>
+
+            <Button Content="View customers" Height="32" Margin="0,0,0,8"
+                    Command="{Binding ShowCustomersViewCommand}"/>
+        </StackPanel>
+
+        <Border Grid.Column="1" Margin="12" BorderThickness="1" Padding="12" BorderBrush="LightGray">
+            <ContentControl Content="{Binding CurrentViewModel}" />
         </Border>
     </Grid>
 </Window>
