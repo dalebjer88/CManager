@@ -13,7 +13,13 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        var filePath = "customers.json";
+        var folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CManager");
+        var filePath = Path.Combine(folderPath, "customers.json");
+
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
 
         IJsonFormatter formatter = new JsonFormatter();
         ICustomerRepo repo = new CustomerRepo(filePath, formatter);
@@ -22,7 +28,7 @@ internal class Program
         ICustomerFactory customerFactory = new CustomerFactory();
 
         ICustomerService service = new CustomerService(repo, idGenerator, customerFactory);
-        
+
         var menu = new MenuController(service);
         menu.Run();
     }
